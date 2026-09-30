@@ -101,6 +101,10 @@ type Client struct {
 	KYC               *KYCResource
 	CreatorStats      *CreatorStatsResource
 	Admin             *AdminResource
+
+	// API has every feature route, one method each (generated from the API
+	// spec: api_generated.go), signed like every other call.
+	API *GeneratedAPI
 }
 
 // ClientOptions matches the env-var defaults of the Node + Python
@@ -336,6 +340,29 @@ func (c *Client) Do(ctx context.Context, opts RequestOptions, out any) error {
 // without hand-writing a typed method per resource.
 func (c *Client) Passthrough(ctx context.Context, method, path string, body, out any) error {
 	return c.Do(ctx, RequestOptions{Method: method, Path: path, Body: body}, out)
+}
+
+// apigenRequest is the call behind Client.API (api_generated.go): signed
+// like every other request, with an idempotency key on writes. An empty
+// body is not sent: the server hashes an empty JSON body as ""
+// (backend middleware/hmac-auth.ts) while Do would hash "{}", and the
+// signatures would not agree.
+func (c *Client) apigenRequest(ctx context.Context, method, path string, query url.Values, body map[string]any) (json.RawMessage, error) {
+	if len(query) > 0 {
+		path += "?" + query.Encode()
+	}
+	opts := RequestOptions{Method: method, Path: path}
+	if len(body) > 0 {
+		opts.Body = body
+	}
+	if strings.ToUpper(method) != http.MethodGet {
+		opts.IdempotencyKey = c.idemFn()
+	}
+	var out json.RawMessage
+	if err := c.Do(ctx, opts, &out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // ─── Helpers ───────────────────────────────────────────────────────────

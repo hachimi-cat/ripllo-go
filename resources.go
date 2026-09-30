@@ -16,6 +16,7 @@ import (
 // mountResources wires the namespaces onto the Client. Called from
 // NewClient and ForMerchant.
 func (c *Client) mountResources() {
+	c.API = &GeneratedAPI{c: c}
 	c.DiscountCodes = &DiscountCodesResource{c: c}
 	c.Pixels = &PixelsResource{c: c}
 	c.Feeds = &FeedsResource{c: c}

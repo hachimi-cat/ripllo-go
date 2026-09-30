@@ -46,6 +46,24 @@ func main() {
 }
 ```
 
+## Every route: `client.API`
+
+`client.API` has every feature route of the Ripllo API, one method each,
+generated from the API spec (`api_generated.go`, by `scripts/apigen.sh`):
+`client.API.<Area><Action>(ctx, pathParams…, *<Area><Action>Args)`, signed
+like every other call. Each returns the response's `data` as
+`json.RawMessage`.
+
+```go
+data, err := rip.API.DiscountCodesCreate(ctx, &ripllo.DiscountCodesCreateArgs{
+    Code: "SPRING10", Type: "percent", Value: 10, Currency: "IDR",
+    Active: ripllo.Ptr(true),
+})
+```
+
+Required fields are plain values, optional ones pointers (`ripllo.Ptr`),
+slices or maps; `Body` passes the whole JSON body.
+
 ## Webhook verification
 
 ```go
