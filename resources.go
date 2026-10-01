@@ -447,10 +447,13 @@ func (r *WebhooksResource) DeleteEndpoint(ctx context.Context, id string) (*Dele
 	return &out, err
 }
 
+// EventsListParams filters the delivery log. Status is pending, sent or failed.
 type EventsListParams struct {
-	Limit  *int
-	Cursor *string
-	Type   *string
+	Limit      *int
+	Cursor     *string
+	Type       *string
+	Status     *string
+	EndpointID *string
 }
 
 func (r *WebhooksResource) ListEvents(ctx context.Context, p EventsListParams) (JSON, error) {
@@ -464,8 +467,36 @@ func (r *WebhooksResource) ListEvents(ctx context.Context, p EventsListParams) (
 	if p.Type != nil {
 		q["type"] = *p.Type
 	}
+	if p.Status != nil {
+		q["status"] = *p.Status
+	}
+	if p.EndpointID != nil {
+		q["endpointId"] = *p.EndpointID
+	}
 	var out JSON
 	err := r.c.Do(ctx, RequestOptions{Method: "GET", Path: "/api/v1/webhooks/events" + qs(q)}, &out)
+	return out, err
+}
+
+// GetEvent returns one delivery with every attempt made at it.
+func (r *WebhooksResource) GetEvent(ctx context.Context, id string) (JSON, error) {
+	var out JSON
+	err := r.c.Do(ctx, RequestOptions{Method: "GET", Path: "/api/v1/webhooks/events/" + url.PathEscape(id)}, &out)
+	return out, err
+}
+
+// RetryEvent queues one more attempt now at a delivery (202, pending); a 409 when it is
+// already queued or its endpoint is off.
+func (r *WebhooksResource) RetryEvent(ctx context.Context, id string) (JSON, error) {
+	var out JSON
+	err := r.c.Do(ctx, RequestOptions{Method: "POST", Path: "/api/v1/webhooks/events/" + url.PathEscape(id) + "/retry", Body: map[string]any{}}, &out)
+	return out, err
+}
+
+// ListEventTypes returns every event type Ripllo emits, with what fires it.
+func (r *WebhooksResource) ListEventTypes(ctx context.Context) (JSON, error) {
+	var out JSON
+	err := r.c.Do(ctx, RequestOptions{Method: "GET", Path: "/api/v1/webhooks/event-types"}, &out)
 	return out, err
 }
 

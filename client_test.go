@@ -850,3 +850,34 @@ func TestAsJSON_RoundTrip(t *testing.T) {
 		t.Fatalf("AsJSON: %v", got)
 	}
 }
+
+func TestWebhooks_DeliveryLog(t *testing.T) {
+	ts := newTestServer(t)
+	c := mustClient(t, ts.server.URL)
+	status, ep := "failed", "ep1"
+	if _, err := c.Webhooks.ListEvents(context.Background(), EventsListParams{Status: &status, EndpointID: &ep}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.Webhooks.GetEvent(context.Background(), "ev 1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.Webhooks.RetryEvent(context.Background(), "ev1"); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := c.Webhooks.ListEventTypes(context.Background()); err != nil {
+		t.Fatal(err)
+	}
+	got := ts.requests
+	if got[0].PathOnly != "/api/v1/webhooks/events" || !strings.Contains(got[0].Path, "status=failed") || !strings.Contains(got[0].Path, "endpointId=ep1") {
+		t.Fatalf("list: %s", got[0].Path)
+	}
+	if got[1].Method != "GET" || got[1].Path != "/api/v1/webhooks/events/ev%201" {
+		t.Fatalf("get: %s %s", got[1].Method, got[1].Path)
+	}
+	if got[2].Method != "POST" || got[2].PathOnly != "/api/v1/webhooks/events/ev1/retry" {
+		t.Fatalf("retry: %s %s", got[2].Method, got[2].PathOnly)
+	}
+	if got[3].PathOnly != "/api/v1/webhooks/event-types" {
+		t.Fatalf("event types: %s", got[3].PathOnly)
+	}
+}

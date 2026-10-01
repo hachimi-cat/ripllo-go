@@ -18,7 +18,7 @@ type apigenTransport interface {
 	apigenRequest(ctx context.Context, method, path string, query url.Values, body map[string]any) (json.RawMessage, error)
 }
 
-// GeneratedAPI has all 207 feature routes of the Ripllo API, one method each
+// GeneratedAPI has all 210 feature routes of the Ripllo API, one method each
 // (generated from the API spec). A method takes the path parameters, then an *<Method>Args
 // with the query fields (tagged query) and the JSON body fields (tagged json): required
 // fields are plain values, optional ones pointers, slices or maps that nil leaves out,
@@ -5208,19 +5208,30 @@ func (a *GeneratedAPI) WebhooksEndpoints(ctx context.Context) (json.RawMessage, 
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/webhooks/endpoints", nil, nil)
 }
 
+// WebhooksEventTypes calls GET /api/v1/webhooks/event-types: The event types an endpoint can subscribe to — every type Ripllo emits, with what fires it (lib/events.ts).
+func (a *GeneratedAPI) WebhooksEventTypes(ctx context.Context) (json.RawMessage, error) {
+	return a.c.apigenRequest(ctx, "GET", "/api/v1/webhooks/event-types", nil, nil)
+}
+
 // WebhooksEventsArgs are the inputs of GeneratedAPI.WebhooksEvents.
 type WebhooksEventsArgs struct {
 	// Cursor is "cursor" in the query.
 	Cursor any `query:"cursor"`
 
+	// EndpointID is "endpointId" in the query.
+	EndpointID any `query:"endpointId"`
+
 	// Limit is "limit" in the query.
 	Limit any `query:"limit"`
+
+	// Status is "status" in the query.
+	Status any `query:"status"`
 
 	// Type is "type" in the query.
 	Type any `query:"type"`
 }
 
-// WebhooksEvents calls GET /api/v1/webhooks/events: The three SDKs (`listEvents({ limit, cursor, type })` in node, python and go) and the dashboard call site have promised these params since they shipped; the server took none of them — a fixed `take: 5.
+// WebhooksEvents calls GET /api/v1/webhooks/events: List webhook deliveries — one row per event per endpoint, newest first, each with its status (pending, sent, failed), attempt count, next retry and every attempt made (`deliveryAttempts`).
 func (a *GeneratedAPI) WebhooksEvents(ctx context.Context, p *WebhooksEventsArgs) (json.RawMessage, error) {
 	if p == nil {
 		p = &WebhooksEventsArgs{}
@@ -5229,13 +5240,31 @@ func (a *GeneratedAPI) WebhooksEvents(ctx context.Context, p *WebhooksEventsArgs
 	if p.Cursor != nil {
 		q.Set("cursor", apigenQueryValue(p.Cursor))
 	}
+	if p.EndpointID != nil {
+		q.Set("endpointId", apigenQueryValue(p.EndpointID))
+	}
 	if p.Limit != nil {
 		q.Set("limit", apigenQueryValue(p.Limit))
+	}
+	if p.Status != nil {
+		q.Set("status", apigenQueryValue(p.Status))
 	}
 	if p.Type != nil {
 		q.Set("type", apigenQueryValue(p.Type))
 	}
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/webhooks/events", q, nil)
+}
+
+// WebhooksEventsRetry calls POST /api/v1/webhooks/events/{id}/retry: Retry a webhook delivery.
+func (a *GeneratedAPI) WebhooksEventsRetry(ctx context.Context, id string) (json.RawMessage, error) {
+	path := "/api/v1/webhooks/events/" + url.PathEscape(id) + "/retry"
+	return a.c.apigenRequest(ctx, "POST", path, nil, nil)
+}
+
+// WebhooksGetEvents calls GET /api/v1/webhooks/events/{id}: Get a webhook delivery, with every attempt made at it.
+func (a *GeneratedAPI) WebhooksGetEvents(ctx context.Context, id string) (json.RawMessage, error) {
+	path := "/api/v1/webhooks/events/" + url.PathEscape(id)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
 // WebhooksUpdateEndpointsArgs are the inputs of GeneratedAPI.WebhooksUpdateEndpoints.
