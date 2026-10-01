@@ -18,7 +18,7 @@ type apigenTransport interface {
 	apigenRequest(ctx context.Context, method, path string, query url.Values, body map[string]any) (json.RawMessage, error)
 }
 
-// GeneratedAPI has all 208 feature routes of the Ripllo API, one method each
+// GeneratedAPI has all 207 feature routes of the Ripllo API, one method each
 // (generated from the API spec). A method takes the path parameters, then an *<Method>Args
 // with the query fields (tagged query) and the JSON body fields (tagged json): required
 // fields are plain values, optional ones pointers, slices or maps that nil leaves out,
@@ -269,36 +269,6 @@ func (a *GeneratedAPI) AbandonedCartSuppressions(ctx context.Context, p *Abandon
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/abandoned-cart/suppressions", q, nil)
 }
 
-// AbandonedCartUnsubscribeArgs are the inputs of GeneratedAPI.AbandonedCartUnsubscribe.
-type AbandonedCartUnsubscribeArgs struct {
-	// AccountID is "accountId" in the query.
-	AccountID any `query:"accountId"`
-
-	// Email is "email" in the query.
-	Email any `query:"email"`
-
-	// Token is "token" in the query.
-	Token any `query:"token"`
-}
-
-// AbandonedCartUnsubscribe calls GET /api/v1/abandoned-cart/unsubscribe: List unsubscribe.
-func (a *GeneratedAPI) AbandonedCartUnsubscribe(ctx context.Context, p *AbandonedCartUnsubscribeArgs) (json.RawMessage, error) {
-	if p == nil {
-		p = &AbandonedCartUnsubscribeArgs{}
-	}
-	q := url.Values{}
-	if p.AccountID != nil {
-		q.Set("accountId", apigenQueryValue(p.AccountID))
-	}
-	if p.Email != nil {
-		q.Set("email", apigenQueryValue(p.Email))
-	}
-	if p.Token != nil {
-		q.Set("token", apigenQueryValue(p.Token))
-	}
-	return a.c.apigenRequest(ctx, "GET", "/api/v1/abandoned-cart/unsubscribe", q, nil)
-}
-
 // AbandonedCartUpdateConfigArgs are the inputs of GeneratedAPI.AbandonedCartUpdateConfig.
 type AbandonedCartUpdateConfigArgs struct {
 	// Enabled is "enabled" in the body.
@@ -387,9 +357,15 @@ func (a *GeneratedAPI) AffiliatesAffiliators(ctx context.Context, p *AffiliatesA
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/affiliates/affiliators", q, nil)
 }
 
-// AffiliatesAffiliators2 calls GET /api/v1/affiliates/affiliators/{handle}: Get an affiliator.
-func (a *GeneratedAPI) AffiliatesAffiliators2(ctx context.Context, handle string) (json.RawMessage, error) {
+// AffiliatesGetAffiliators calls GET /api/v1/affiliates/affiliators/{handle}: Get an affiliator.
+func (a *GeneratedAPI) AffiliatesGetAffiliators(ctx context.Context, handle string) (json.RawMessage, error) {
 	path := "/api/v1/affiliates/affiliators/" + url.PathEscape(handle)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
+// AffiliatesGetPrograms calls GET /api/v1/affiliates/programs/{id}: Get a program.
+func (a *GeneratedAPI) AffiliatesGetPrograms(ctx context.Context, id string) (json.RawMessage, error) {
+	path := "/api/v1/affiliates/programs/" + url.PathEscape(id)
 	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
@@ -444,12 +420,6 @@ func (a *GeneratedAPI) AffiliatesPrograms(ctx context.Context, p *AffiliatesProg
 		q.Set("limit", apigenQueryValue(p.Limit))
 	}
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/affiliates/programs", q, nil)
-}
-
-// AffiliatesPrograms2 calls GET /api/v1/affiliates/programs/{id}: Get a program.
-func (a *GeneratedAPI) AffiliatesPrograms2(ctx context.Context, id string) (json.RawMessage, error) {
-	path := "/api/v1/affiliates/programs/" + url.PathEscape(id)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
 // AffiliatesProgramsEnrollArgs are the inputs of GeneratedAPI.AffiliatesProgramsEnroll.
@@ -1017,6 +987,18 @@ func (a *GeneratedAPI) BlogGet(ctx context.Context, id string) (json.RawMessage,
 	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
+// BlogGetPublic calls GET /api/v1/blog/public/{accountId}: Public storefront read — list published posts.
+func (a *GeneratedAPI) BlogGetPublic(ctx context.Context, accountID string) (json.RawMessage, error) {
+	path := "/api/v1/blog/public/" + url.PathEscape(accountID)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
+// BlogGetPublic2 calls GET /api/v1/blog/public/{accountId}/{slug}: Get a public.
+func (a *GeneratedAPI) BlogGetPublic2(ctx context.Context, accountID string, slug string) (json.RawMessage, error) {
+	path := "/api/v1/blog/public/" + url.PathEscape(accountID) + "/" + url.PathEscape(slug)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
 // BlogListArgs are the inputs of GeneratedAPI.BlogList.
 type BlogListArgs struct {
 	// Status is "status" in the query.
@@ -1033,18 +1015,6 @@ func (a *GeneratedAPI) BlogList(ctx context.Context, p *BlogListArgs) (json.RawM
 		q.Set("status", apigenQueryValue(p.Status))
 	}
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/blog", q, nil)
-}
-
-// BlogPublic calls GET /api/v1/blog/public/{accountId}: Public storefront read — list published posts.
-func (a *GeneratedAPI) BlogPublic(ctx context.Context, accountID string) (json.RawMessage, error) {
-	path := "/api/v1/blog/public/" + url.PathEscape(accountID)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
-}
-
-// BlogPublic2 calls GET /api/v1/blog/public/{accountId}/{slug}: Get a public.
-func (a *GeneratedAPI) BlogPublic2(ctx context.Context, accountID string, slug string) (json.RawMessage, error) {
-	path := "/api/v1/blog/public/" + url.PathEscape(accountID) + "/" + url.PathEscape(slug)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
 // BlogUpdateArgs are the inputs of GeneratedAPI.BlogUpdate.
@@ -2664,10 +2634,10 @@ func (a *GeneratedAPI) CreatorStatsConnect(ctx context.Context, platform string,
 
 // CreatorStatsConnectCallbackArgs are the inputs of GeneratedAPI.CreatorStatsConnectCallback.
 type CreatorStatsConnectCallbackArgs struct {
-	// Code is "code" in the query.
+	// Code is "code" in the query, required.
 	Code any `query:"code"`
 
-	// State is "state" in the query.
+	// State is "state" in the query, required.
 	State any `query:"state"`
 }
 
@@ -3500,6 +3470,12 @@ func (a *GeneratedAPI) InboxArchive(ctx context.Context, id string) (json.RawMes
 	return a.c.apigenRequest(ctx, "POST", path, nil, nil)
 }
 
+// InboxGetThreads calls GET /api/v1/inbox/threads/{provider}/{handle}: Get a thread.
+func (a *GeneratedAPI) InboxGetThreads(ctx context.Context, provider string, handle string) (json.RawMessage, error) {
+	path := "/api/v1/inbox/threads/" + url.PathEscape(provider) + "/" + url.PathEscape(handle)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
 // InboxRead calls POST /api/v1/inbox/{id}/read: Read an inbox.
 func (a *GeneratedAPI) InboxRead(ctx context.Context, id string) (json.RawMessage, error) {
 	path := "/api/v1/inbox/" + url.PathEscape(id) + "/read"
@@ -3509,12 +3485,6 @@ func (a *GeneratedAPI) InboxRead(ctx context.Context, id string) (json.RawMessag
 // InboxThreads calls GET /api/v1/inbox/threads: List threads.
 func (a *GeneratedAPI) InboxThreads(ctx context.Context) (json.RawMessage, error) {
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/inbox/threads", nil, nil)
-}
-
-// InboxThreads2 calls GET /api/v1/inbox/threads/{provider}/{handle}: Get a thread.
-func (a *GeneratedAPI) InboxThreads2(ctx context.Context, provider string, handle string) (json.RawMessage, error) {
-	path := "/api/v1/inbox/threads/" + url.PathEscape(provider) + "/" + url.PathEscape(handle)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
 
 // InsightsCampaigns calls GET /api/v1/insights/campaigns/{id}: Get a campaign.
@@ -4070,12 +4040,6 @@ func (a *GeneratedAPI) MarketplaceCampaigns(ctx context.Context, p *MarketplaceC
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/marketplace/campaigns", q, nil)
 }
 
-// MarketplaceCampaigns2 calls GET /api/v1/marketplace/campaigns/{id}: Get a campaign.
-func (a *GeneratedAPI) MarketplaceCampaigns2(ctx context.Context, id string) (json.RawMessage, error) {
-	path := "/api/v1/marketplace/campaigns/" + url.PathEscape(id)
-	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
-}
-
 // MarketplaceCampaignsApplyArgs are the inputs of GeneratedAPI.MarketplaceCampaignsApply.
 type MarketplaceCampaignsApplyArgs struct {
 	// PitchText is "pitchText" in the body, required.
@@ -4150,8 +4114,14 @@ func (a *GeneratedAPI) MarketplaceCreators(ctx context.Context, p *MarketplaceCr
 	return a.c.apigenRequest(ctx, "GET", "/api/v1/marketplace/creators", q, nil)
 }
 
-// MarketplaceCreators2 calls GET /api/v1/marketplace/creators/{handle}: Get a creator.
-func (a *GeneratedAPI) MarketplaceCreators2(ctx context.Context, handle string) (json.RawMessage, error) {
+// MarketplaceGetCampaigns calls GET /api/v1/marketplace/campaigns/{id}: Get a campaign.
+func (a *GeneratedAPI) MarketplaceGetCampaigns(ctx context.Context, id string) (json.RawMessage, error) {
+	path := "/api/v1/marketplace/campaigns/" + url.PathEscape(id)
+	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
+}
+
+// MarketplaceGetCreators calls GET /api/v1/marketplace/creators/{handle}: Get a creator.
+func (a *GeneratedAPI) MarketplaceGetCreators(ctx context.Context, handle string) (json.RawMessage, error) {
 	path := "/api/v1/marketplace/creators/" + url.PathEscape(handle)
 	return a.c.apigenRequest(ctx, "GET", path, nil, nil)
 }
@@ -4996,7 +4966,7 @@ func (a *GeneratedAPI) ReferralsStats(ctx context.Context) (json.RawMessage, err
 
 // UploadsAvatarArgs are the inputs of GeneratedAPI.UploadsAvatar.
 type UploadsAvatarArgs struct {
-	// Key is "key" in the query.
+	// Key is "key" in the query, required.
 	Key any `query:"key"`
 }
 
@@ -5014,7 +4984,7 @@ func (a *GeneratedAPI) UploadsAvatar(ctx context.Context, p *UploadsAvatarArgs) 
 
 // UploadsDeliverableArgs are the inputs of GeneratedAPI.UploadsDeliverable.
 type UploadsDeliverableArgs struct {
-	// ID is "id" in the query.
+	// ID is "id" in the query, required.
 	ID any `query:"id"`
 }
 
@@ -5082,7 +5052,7 @@ func (a *GeneratedAPI) UploadsFromURL(ctx context.Context, p *UploadsFromURLArgs
 
 // UploadsMerchantAssetArgs are the inputs of GeneratedAPI.UploadsMerchantAsset.
 type UploadsMerchantAssetArgs struct {
-	// Key is "key" in the query.
+	// Key is "key" in the query, required.
 	Key any `query:"key"`
 }
 
@@ -5283,6 +5253,55 @@ func (a *GeneratedAPI) WebhooksUpdateEndpoints(ctx context.Context, id string, p
 	payload := apigenBody(p.Body)
 	path := "/api/v1/webhooks/endpoints/" + url.PathEscape(id)
 	return a.c.apigenRequest(ctx, "PATCH", path, nil, payload)
+}
+
+// AffiliatesAffiliators2 is the old name of AffiliatesGetAffiliators (GET /api/v1/affiliates/affiliators/{handle}).
+//
+// Deprecated: use AffiliatesGetAffiliators.
+func (a *GeneratedAPI) AffiliatesAffiliators2(ctx context.Context, handle string) (json.RawMessage, error) {
+	return a.AffiliatesGetAffiliators(ctx, handle)
+}
+
+// AffiliatesPrograms2 is the old name of AffiliatesGetPrograms (GET /api/v1/affiliates/programs/{id}).
+//
+// Deprecated: use AffiliatesGetPrograms.
+func (a *GeneratedAPI) AffiliatesPrograms2(ctx context.Context, id string) (json.RawMessage, error) {
+	return a.AffiliatesGetPrograms(ctx, id)
+}
+
+// BlogPublic is the old name of BlogGetPublic (GET /api/v1/blog/public/{accountId}).
+//
+// Deprecated: use BlogGetPublic.
+func (a *GeneratedAPI) BlogPublic(ctx context.Context, accountID string) (json.RawMessage, error) {
+	return a.BlogGetPublic(ctx, accountID)
+}
+
+// BlogPublic2 is the old name of BlogGetPublic2 (GET /api/v1/blog/public/{accountId}/{slug}).
+//
+// Deprecated: use BlogGetPublic2.
+func (a *GeneratedAPI) BlogPublic2(ctx context.Context, accountID string, slug string) (json.RawMessage, error) {
+	return a.BlogGetPublic2(ctx, accountID, slug)
+}
+
+// InboxThreads2 is the old name of InboxGetThreads (GET /api/v1/inbox/threads/{provider}/{handle}).
+//
+// Deprecated: use InboxGetThreads.
+func (a *GeneratedAPI) InboxThreads2(ctx context.Context, provider string, handle string) (json.RawMessage, error) {
+	return a.InboxGetThreads(ctx, provider, handle)
+}
+
+// MarketplaceCampaigns2 is the old name of MarketplaceGetCampaigns (GET /api/v1/marketplace/campaigns/{id}).
+//
+// Deprecated: use MarketplaceGetCampaigns.
+func (a *GeneratedAPI) MarketplaceCampaigns2(ctx context.Context, id string) (json.RawMessage, error) {
+	return a.MarketplaceGetCampaigns(ctx, id)
+}
+
+// MarketplaceCreators2 is the old name of MarketplaceGetCreators (GET /api/v1/marketplace/creators/{handle}).
+//
+// Deprecated: use MarketplaceGetCreators.
+func (a *GeneratedAPI) MarketplaceCreators2(ctx context.Context, handle string) (json.RawMessage, error) {
+	return a.MarketplaceGetCreators(ctx, handle)
 }
 
 // apigenBody copies Body, so the fields set over it never change the caller's map.
